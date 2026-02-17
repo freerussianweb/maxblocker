@@ -213,13 +213,3 @@ If a manufacturer or distributor preinstalls unwanted software, that does not me
 maxblocker.exe simply makes a system command accessible in a few clicks.
 
 If you prefer full manual control — use ADB directly.
-
-If you'd like, I can also:
-
-Add a GitHub-style badge section
-
-Add a legal disclaimer
-
-Reformat it for Habr / blog publication
-
-Create a clean open-source project README version with sections like License, Installation, Contributing, etc.
