@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Как отключить мессенджер «Макс» на Android</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Unbounded:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --accent: #00ff88;
+    --accent2: #00bfff;
+    --text: #e0e0f0;
+    --muted: #666688;
+    --danger: #ff4466;
+    --code-bg: #0d1117;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    padding: 60px 0 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 3px 10px;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    animation: fadeIn 0.5s ease forwards;
+  }
+
+  h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(22px, 4vw, 36px);
+    font-weight: 900;
+    line-height: 1.2;
+    color: #fff;
+    animation: slideUp 0.6s ease forwards;
+  }
+
+  h1 span {
+    color: var(--accent);
+  }
+
+  .subtitle {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 13px;
+    animation: slideUp 0.7s ease forwards;
+  }
+
+  .github-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 24px;
+    padding: 10px 20px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    transition: background 0.2s, color 0.2s;
+    animation: slideUp 0.8s ease forwards;
+  }
+
+  .github-link:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .github-link svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+
+  /* TOC */
+  .toc {
+    margin: 40px 0;
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    animation: fadeIn 0.8s ease forwards;
+  }
+
+  .toc-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .toc a {
+    display: block;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 4px 0;
+    font-size: 13px;
+    transition: color 0.2s;
+  }
+
+  .toc a:hover { color: var(--accent); }
+
+  .toc a::before {
+    content: '→ ';
+    color: var(--accent);
+  }
+
+  /* Main content */
+  main { padding: 40px 0 80px; }
+
+  section {
+    margin-bottom: 60px;
+    animation: fadeIn 0.6s ease forwards;
+  }
+
+  h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  h2::before {
+    content: attr(data-num);
+    color: var(--accent);
+    font-size: 12px;
+    min-width: 28px;
+    height: 28px;
+    border: 1px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent2);
+    margin: 28px 0 12px;
+    letter-spacing: 0.05em;
+  }
+
+  p {
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  /* Steps */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .step:hover {
+    border-color: var(--accent);
+    transform: translateX(4px);
+  }
+
+  .step-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--accent);
+    min-width: 36px;
+    line-height: 1;
+  }
+
+  .step-content {
+    flex: 1;
+  }
+
+  .step-title {
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+    font-size: 13px;
+  }
+
+  .step-desc {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  /* Code blocks */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    margin: 12px 0;
+    overflow-x: auto;
+    position: relative;
+  }
+
+  .code-block code {
+    color: var(--accent);
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: pre;
+  }
+
+  .code-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  /* Command cards */
+  .cmd-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .cmd-card {
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+
+  .cmd-card:hover { border-color: var(--accent2); }
+
+  .cmd-card-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .cmd-card-label.disable { color: var(--danger); }
+  .cmd-card-label.enable { color: var(--accent); }
+  .cmd-card-label.remove { color: #ffaa00; }
+
+  .cmd-card code {
+    color: var(--text);
+    font-size: 11px;
+    line-height: 1.7;
+    display: block;
+    word-break: break-all;
+  }
+
+  /* Warning/Info boxes */
+  .info-box {
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid;
+    display: flex;
+    gap: 16px;
+  }
+
+  .info-box.warning {
+    background: rgba(255,170,0,0.05);
+    border-color: rgba(255,170,0,0.3);
+  }
+
+  .info-box.success {
+    background: rgba(0,255,136,0.05);
+    border-color: rgba(0,255,136,0.3);
+  }
+
+  .info-box-icon {
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  .info-box-text {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .info-box-text strong {
+    color: var(--text);
+    display: block;
+    margin-bottom: 4px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* Comparison */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin: 20px 0;
+    background: var(--border);
+  }
+
+  @media (max-width: 600px) {
+    .compare { grid-template-columns: 1fr; }
+    .cmd-grid { grid-template-columns: 1fr; }
+  }
+
+  .compare-col {
+    padding: 20px;
+    background: var(--surface);
+  }
+
+  .compare-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .compare-title.bad { color: var(--danger); }
+  .compare-title.good { color: var(--accent); }
+
+  .compare-item {
+    font-size: 12px;
+    color: var(--muted);
+    padding: 5px 0;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .compare-item::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+  }
+
+  .compare-col.bad .compare-item::before { color: var(--danger); }
+  .compare-col.good .compare-item::before { color: var(--accent); }
+
+  /* Limits list */
+  .limit-list {
+    list-style: none;
+  }
+
+  .limit-list li {
+    padding: 10px 0;
+    padding-left: 20px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .limit-list li::before {
+    content: '!';
+    position: absolute;
+    left: 0;
+    color: #ffaa00;
+    font-weight: 700;
+  }
+
+  /* Footer */
+  footer {
+    padding: 40px 0;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Inline code */
+  code {
+    background: var(--code-bg);
+    color: var(--accent);
+    padding: 2px 6px;
+    font-size: 12px;
+    border: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="tag">Android · ADB · Руководство</div>
+    <h1>Как отключить<br>мессенджер <span>«Макс»</span><br>на Android</h1>
+    <p class="subtitle">Полное руководство: утилита maxblocker.exe и ручные команды ADB</p>
+    <a class="github-link" href="https://github.com/freerussianweb/maxblocker/" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      freerussianweb/maxblocker
+    </a>
+  </header>
+
+  <nav class="toc">
+    <div class="toc-title">// содержание</div>
+    <a href="#intro">Введение</a>
+    <a href="#guide">Инструкция по применению</a>
+    <a href="#why">Почему это лучше «заморозки»</a>
+    <a href="#how">Как работает утилита</a>
+    <a href="#manual">Ручной способ через ADB</a>
+    <a href="#security">О безопасности</a>
+    <a href="#limits">Ограничения</a>
+  </nav>
+
+  <main>
+
+    <section id="intro">
+      <h2 data-num="//01">Введение</h2>
+      <p>В 2025–2026 году в России становится всё сложнее купить смартфон без предустановленного системного ПО. В частности — мессенджера «Макс».</p>
+      <p>Устройства всё чаще продаются уже с предустановленными приложениями, которые нельзя удалить стандартными средствами. Обсуждаются инициативы, связанные с реестром IMEI, что потенциально усложняет покупку «серых» устройств.</p>
+      <div class="info-box success">
+        <div class="info-box-icon">💡</div>
+        <div class="info-box-text">
+          <strong>Ключевой момент</strong>
+          Если приложение нельзя удалить через интерфейс Android — это не означает, что его нельзя отключить. Утилита <code>maxblocker.exe</code> позволяет полностью отключить приложение, при необходимости снова включить, либо удалить для текущего пользователя — даже если оно системное.
+        </div>
+      </div>
+    </section>
+
+    <section id="guide">
+      <h2 data-num="//02">Инструкция по применению</h2>
+
+      <h3>1. Включение режима разработчика</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Открыть Настройки</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">О телефоне → Сведения о ПО</div>
+            <div class="step-desc">Найти раздел с информацией об устройстве</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Найти пункт «Номер сборки»</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Нажать 7 раз</div>
+            <div class="step-desc">Появится сообщение «Вы стали разработчиком»</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>2. Включение отладки по USB</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Настройки → Для разработчиков</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Включить «Отладка по USB»</div>
+            <div class="step-desc">Подтвердить предупреждение</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>3. Подключение к ПК</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Подключить смартфон кабелем USB</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Разблокировать экран</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Подтвердить RSA-ключ</div>
+            <div class="step-desc">Если появится запрос — принять</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>4. Использование утилиты</h3>
+      <p>Запустить <code>maxblocker.exe</code>. В меню выбрать нужное действие:</p>
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <div class="cmd-card-label disable">1 — Отключить</div>
+          <code>pm disable-user --user 0 ru.max.messenger</code>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-card-label enable">2 — Включить</div>
+          <code>pm enable ru.max.messenger</code>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-card-label remove">3 — Удалить</div>
+          <code>pm uninstall -k --user 0 ru.max.messenger</code>
+        </div>
+      </div>
+      <p style="color: var(--muted); font-size: 12px;">Дальше всё делается автоматически через ADB.</p>
+    </section>
+
+    <section id="why">
+      <h2 data-num="//03">Почему это лучше «заморозки»</h2>
+
+      <h3>Заморозка ≠ disable-user</h3>
+      <div class="compare">
+        <div class="compare-col bad">
+          <div class="compare-title bad">✕ Заморозка в настройках</div>
+          <div class="compare-item">Лишь ограничение автозапуска</div>
+          <div class="compare-item">Сервисы могут оставаться активными</div>
+          <div class="compare-item">Обновления через системные механизмы возможны</div>
+          <div class="compare-item">При обновлении системы состояние сбрасывается</div>
+        </div>
+        <div class="compare-col good">
+          <div class="compare-title good">✓ pm disable-user --user 0</div>
+          <div class="compare-item">Убирает приложение из лаунчера</div>
+          <div class="compare-item">Запрещает запуск сервисов</div>
+          <div class="compare-item">Запрещает получение broadcast</div>
+          <div class="compare-item">Блокирует фоновые процессы</div>
+        </div>
+      </div>
+
+      <h3>Удаление для пользователя 0</h3>
+      <div class="code-block">
+        <div class="code-label">// команда</div>
+        <code>pm uninstall -k --user 0 ru.max.messenger</code>
+      </div>
+      <p>Удаляет приложение для текущего пользователя, даже если оно предустановлено как system-app. Файл остаётся в разделе <code>/system</code>, но приложение не активно, не запускается, не имеет пользовательских данных и не выполняет код.</p>
+      <div class="info-box success">
+        <div class="info-box-icon">✓</div>
+        <div class="info-box-text">
+          <strong>Итог</strong>
+          Это максимально корректный способ «деактивации» без root.
+        </div>
+      </div>
+    </section>
+
+    <section id="how">
+      <h2 data-num="//04">Как работает утилита</h2>
+      <p>Утилита — это оболочка над ADB. Никакой магии, никаких эксплойтов. Только стандартный Android Package Manager.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">adb start-server</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Проверка устройства</div>
+            <div class="step-desc"><code>adb devices</code></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Проверка установки пакета</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Выполнение выбранной команды</div>
+            <div class="step-desc">Отключение, включение или удаление через pm</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="manual">
+      <h2 data-num="//05">Ручной способ через ADB</h2>
+      <p>Если не хотите использовать готовый .exe:</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Скачать platform-tools с сайта Google</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Распаковать архив</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Открыть CMD в папке</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Команды</h3>
+      <div class="code-block">
+        <div class="code-label">// проверка подключения</div>
+        <code>adb devices</code>
+      </div>
+      <div class="code-block">
+        <div class="code-label">// отключение</div>
+        <code>adb shell pm disable-user --user 0 ru.max.messenger</code>
+      </div>
+      <div class="code-block">
+        <div class="code-label">// удаление</div>
+        <code>adb shell pm uninstall -k --user 0 ru.max.messenger</code>
+      </div>
+      <div class="code-block">
+        <div class="code-label">// включение обратно</div>
+        <code>adb shell pm enable ru.max.messenger</code>
+      </div>
+    </section>
+
+    <section id="security">
+      <h2 data-num="//06">О безопасности утилиты</h2>
+      <p>Утилита написана на Python и собрана через PyInstaller.</p>
+      <div class="compare">
+        <div class="compare-col good">
+          <div class="compare-title good">✓ Что есть в утилите</div>
+          <div class="compare-item">Только команды ADB</div>
+          <div class="compare-item">Стандартные Python-библиотеки</div>
+          <div class="compare-item">Открытый для анализа код</div>
+        </div>
+        <div class="compare-col bad">
+          <div class="compare-title bad">✕ Чего нет в утилите</div>
+          <div class="compare-item">Скрытых драйверов</div>
+          <div class="compare-item">Сторонних библиотек</div>
+          <div class="compare-item">Сетевых подключений</div>
+          <div class="compare-item">Телеметрии и скрытых действий</div>
+        </div>
+      </div>
+      <div class="info-box warning">
+        <div class="info-box-icon">🔍</div>
+        <div class="info-box-text">
+          <strong>Проверка</strong>
+          Любой желающий может распаковать exe, просмотреть код и убедиться, что выполняются только команды ADB.
+        </div>
+      </div>
+    </section>
+
+    <section id="limits">
+      <h2 data-num="//07">Ограничения</h2>
+      <ul class="limit-list">
+        <li>Нужна включённая отладка по USB</li>
+        <li>Нужно подтвердить RSA-ключ при первом подключении</li>
+        <li>На корпоративных устройствах может быть запрещено</li>
+        <li>После сброса к заводским настройкам операцию нужно повторить</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 data-num="//08">Заключение</h2>
+      <p>Android даёт пользователю инструменты контроля. ADB — один из них.</p>
+      <p>Если производитель или поставщик предустановил нежелательное приложение — это не означает, что пользователь обязан с ним мириться.</p>
+      <div class="info-box success">
+        <div class="info-box-icon">→</div>
+        <div class="info-box-text">
+          <strong>Итог</strong>
+          <code>maxblocker.exe</code> — это просто способ сделать системную команду доступной в пару кликов. Если предпочитаете всё делать вручную — используйте ADB напрямую.
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Android · ADB · Package Manager — стандартные инструменты без root-доступа</p>
+  </footer>
+
+</div>
+</body>
+</html>
